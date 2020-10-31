@@ -18,23 +18,13 @@ const getBalanceNumber = (balance: any, decimals = 18) => {
   return displayBalance.toNumber()
 }
 
-const getBnbPrice = async () => {
-  const wbnb = new web3.eth.Contract(ERC20ABI, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c');
-  const bnbAmount = await wbnb.methods.balanceOf('0x1b96b92314c44b159149f7e0303511fb2fc4774f').call()
-  const wbusd = new web3.eth.Contract(ERC20ABI, '0xe9e7cea3dedca5984780bafc599bd69add087d56');
-  const busdAmount = await wbusd.methods.balanceOf('0x1b96b92314c44b159149f7e0303511fb2fc4774f').call()
-
-  return getBalanceNumber(new BigNumber(busdAmount))/getBalanceNumber(new BigNumber(bnbAmount))
-}
-
 const getStaxPrice = async () => {
-  const wbnb = new web3.eth.Contract(ERC20ABI, '0xbb4CdB9CBd36B01bD1cBaEBF2De08d9173bc095c');
-  const bnbAmount = await wbnb.methods.balanceOf('0x7FB0017195470bc6978659396eC9D750A35C51fE').call()
   const wstax = new web3.eth.Contract(ERC20ABI, '0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4');
-  const staxAmount = await wstax.methods.balanceOf('0x7FB0017195470bc6978659396eC9D750A35C51fE').call()
-  const bnbPrice = await getBnbPrice()
+  const staxAmount = await wstax.methods.balanceOf('0x13AbFA7B781bEe80cA7FAe7Ec71045488d876A8d').call()
+  const wbusd = new web3.eth.Contract(ERC20ABI, '0xe9e7cea3dedca5984780bafc599bd69add087d56');
+  const busdAmount = await wbusd.methods.balanceOf('0x13AbFA7B781bEe80cA7FAe7Ec71045488d876A8d').call()
 
-  return getBalanceNumber(new BigNumber(bnbAmount)) / getBalanceNumber(new BigNumber(staxAmount)) * bnbPrice
+  return getBalanceNumber(new BigNumber(busdAmount))/getBalanceNumber(new BigNumber(staxAmount))
 }
 
 const lpAddress = [
@@ -48,23 +38,40 @@ const lpAddress = [
 
 
 const farm = async () => {
-// const handler = async (event) => {
   let data = template.pools
 
   const wbusd = new web3.eth.Contract(ERC20ABI, '0xe9e7cea3dedca5984780bafc599bd69add087d56');
-
-  const bnbprice = await getBnbPrice()
+  const wstax = new web3.eth.Contract(ERC20ABI, '0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4');
+  const wusdt = new web3.eth.Contract(ERC20ABI, '0x55d398326f99059ff775485246999027b3197955');
   const staxprice = await getStaxPrice()
 
   let TVL = 0
 
   const promises = lpAddress.map(async (lp, index) => {
-    const lpamout = await wbusd.methods.balanceOf(lp).call()
-    let totalStaked = getBalanceNumber(new BigNumber(lpamout)) * 2
-    const apy = data[index + 1].points / 3700 * yearCakes * staxprice / totalStaked
-    data[index + 1].totalStaked = totalStaked
-    data[index + 1].apr = apy
-    TVL =  TVL +totalStaked
+    let lpbusd = await wbusd.methods.balanceOf(lp).call()
+    let lpstax = await wstax.methods.balanceOf(lp).call()
+    let lpusdt = await wusdt.methods.balanceOf(lp).call()
+    if (lpstax.gt(0)) {
+        let totalStaked = getBalanceNumber(new BigNumber(lpstax)) * 2
+        const apy = data[index + 1].points / 3700 * yearCakes * staxprice / totalStaked
+        data[index + 1].totalStaked = totalStaked
+        data[index + 1].apr = apy
+        TVL =  TVL +totalStaked
+    }
+    else if(lpbusd.gt(0)) {
+        let totalStaked = getBalanceNumber(new BigNumber(lpbusd)) * 2
+        const apy = data[index + 1].points / 3700 * yearCakes / totalStaked
+        data[index + 1].totalStaked = totalStaked
+        data[index + 1].apr = apy
+        TVL =  TVL +totalStaked
+    }
+    else if(lpusdt.gt(0)) {
+        let totalStaked = getBalanceNumber(new BigNumber(lpusdt)) * 2
+        const apy = data[index + 1].points / 3700 * yearCakes / totalStaked
+        data[index + 1].totalStaked = totalStaked
+        data[index + 1].apr = apy
+        TVL =  TVL +totalStaked
+    }
   })
 
   await Promise.all(promises)
@@ -74,7 +81,6 @@ const farm = async () => {
 }
 
 export default async (_req: NowRequest, res: NowResponse) => {
-//   const date = new Date().toString();
   const data = await farm()
   res.status(200).send(data);
 };
