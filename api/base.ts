@@ -24,11 +24,18 @@ const getBalanceNumber = (balance: any, decimals = 18) => {
   return displayBalance.toNumber()
 }
 
+const getTotolSupply = async () => {
+    const wstax = new web3.eth.Contract(ERC20ABI, '0x0da6ed8b13214ff28e9ca979dd37439e8a88f6c4');
+    return wstax.methods.totalSupply().call()
+}
+
 
 export default async (_req: NowRequest, res: NowResponse) => {
     const price = await getStaxPrice()
+    const supply = await getTotolSupply()
     const data = {
-        price
+        price,
+        supply
     }
     res.status(200).send(data);
 };
