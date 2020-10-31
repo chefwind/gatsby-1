@@ -32,7 +32,7 @@ const getTotolSupply = async () => {
 
 export default async (_req: NowRequest, res: NowResponse) => {
     const price = await getStaxPrice()
-    const supply = await getTotolSupply()
+    const supply = getBalanceNumber(await getTotolSupply())
     const data = {
         price,
         supply
