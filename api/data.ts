@@ -53,21 +53,21 @@ const farm = async () => {
     let lpusdt = await wusdt.methods.balanceOf(lp).call()
     if (lpstax>0) {
         let totalStaked = getBalanceNumber(new BigNumber(lpstax)) * 2
-        const apy = data[index + 1].points / 3700 * yearCakes * staxprice / totalStaked
+        const apy = data[index].points / 3700 * yearCakes * staxprice / totalStaked
         data[index + 1].totalStaked = totalStaked
         data[index + 1].apr = apy
         TVL =  TVL +totalStaked
     }
     else if(lpbusd>0) {
         let totalStaked = getBalanceNumber(new BigNumber(lpbusd)) * 2
-        const apy = data[index + 1].points / 3700 * yearCakes / totalStaked
+        const apy = data[index].points / 3700 * yearCakes / totalStaked
         data[index + 1].totalStaked = totalStaked
         data[index + 1].apr = apy
         TVL =  TVL +totalStaked
     }
     else if(lpusdt>0) {
         let totalStaked = getBalanceNumber(new BigNumber(lpusdt)) * 2
-        const apy = data[index + 1].points / 3700 * yearCakes / totalStaked
+        const apy = data[index].points / 3700 * yearCakes / totalStaked
         data[index + 1].totalStaked = totalStaked
         data[index + 1].apr = apy
         TVL =  TVL +totalStaked
