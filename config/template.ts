@@ -15,8 +15,8 @@ export default {
   ],
   "pools": [
     {
-      "name": "STAX", // Pool name if any
-      "pair": "STAX",
+      "name": "STAX-BNB FLIP", // Pool name if any
+      "pair": "STAX-BNB FLIP",
       "pairLink": "https://stablexswap.com",
       "logo": "https://stablexswap.com/Logo.png",
       "poolRewards": ["STAX"], // The reward token ticker
@@ -25,8 +25,8 @@ export default {
       "points": 500
     },
     {
-      "name": "STAX", // Pool name if any
-      "pair": "STAX",
+      "name": "STAX-BUSD FLIP", // Pool name if any
+      "pair": "STAX-BUSD FLIP",
       "pairLink": "https://stablexswap.com",
       "logo": "https://stablexswap.com/Logo.png",
       "poolRewards": ["STAX"], // The reward token ticker
@@ -45,8 +45,8 @@ export default {
       "points": 300
     },
     {
-      "name": "BUSD-DAI FLI", // Pool name if any
-      "pair": "BUSD-DAI FLI",
+      "name": "BUSD-DAI FLIP", // Pool name if any
+      "pair": "BUSD-DAI FLIP",
       "pairLink": "https://stablexswap.com",
       "logo": "https://stablexswap.com/Logo.png",
       "poolRewards": ["STAX"], // The reward token ticker
