@@ -65,7 +65,7 @@ const farm = async () => {
         const stakedlp = await lptoken.methods.balanceOf(chefaddress).call()
         const total = await lptoken.methods.totalSupply().call()
         let totalStaked = getBalanceNumber(new BigNumber(lpbusd)) * 2 * (stakedlp/total)
-        const apy = data[index].points / 3700 * yearCakes / totalStaked
+        const apy = data[index].points / 3700 * staxprice * yearCakes / totalStaked
         data[index].totalStaked = totalStaked
         data[index].apr = apy
         TVL =  TVL +totalStaked
@@ -75,7 +75,7 @@ const farm = async () => {
         const stakedlp = await lptoken.methods.balanceOf(chefaddress).call()
         const total = await lptoken.methods.totalSupply().call()
         let totalStaked = getBalanceNumber(new BigNumber(lpusdt)) * 2 * (stakedlp/total)
-        const apy = data[index].points / 3700 * yearCakes / totalStaked
+        const apy = data[index].points / 3700 * staxprice * yearCakes / totalStaked
         data[index].totalStaked = totalStaked
         data[index].apr = apy
         TVL =  TVL +totalStaked
