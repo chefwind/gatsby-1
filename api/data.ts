@@ -36,6 +36,8 @@ const lpAddress = [
   "0x85f8628bfff75d08f1aa415e5c7e85d96bfd7f57", // USDT-USDC FLIP
 ]
 
+const chefaddress = '0xC80991F9106e26e43Bf1C07C764829a85f294C71'
+
 
 const farm = async () => {
   let data = template.pools
@@ -52,21 +54,27 @@ const farm = async () => {
     let lpstax = await wstax.methods.balanceOf(lp).call()
     let lpusdt = await wusdt.methods.balanceOf(lp).call()
     if (lpstax>0) {
-        let totalStaked = getBalanceNumber(new BigNumber(lpstax)) * 2
+        let totalStaked = getBalanceNumber(new BigNumber(lpstax)) * 2 * staxprice
         const apy = data[index].points / 3700 * yearCakes * staxprice / totalStaked
         data[index].totalStaked = totalStaked
         data[index].apr = apy
         TVL =  TVL +totalStaked
     }
     else if(lpbusd>0) {
-        let totalStaked = getBalanceNumber(new BigNumber(lpbusd)) * 2
+        const lptoken = new web3.eth.Contract(ERC20ABI, lp);
+        const stakedlp = await lptoken.methods.balanceOf(chefaddress).call()
+        const total = await lptoken.methods.totalSupply().call()
+        let totalStaked = getBalanceNumber(new BigNumber(lpbusd)) * 2 * (stakedlp/total)
         const apy = data[index].points / 3700 * yearCakes / totalStaked
         data[index].totalStaked = totalStaked
         data[index].apr = apy
         TVL =  TVL +totalStaked
     }
     else if(lpusdt>0) {
-        let totalStaked = getBalanceNumber(new BigNumber(lpusdt)) * 2
+        const lptoken = new web3.eth.Contract(ERC20ABI, lp);
+        const stakedlp = await lptoken.methods.balanceOf(chefaddress).call()
+        const total = await lptoken.methods.totalSupply().call()
+        let totalStaked = getBalanceNumber(new BigNumber(lpusdt)) * 2 * (stakedlp/total)
         const apy = data[index].points / 3700 * yearCakes / totalStaked
         data[index].totalStaked = totalStaked
         data[index].apr = apy
